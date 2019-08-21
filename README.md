@@ -29,3 +29,5 @@ The first lesson drawn from this experiment is that naive algorithms are sometim
 * the call to `yield()` in the feather mutex' loop turned out to make it a lot quicker, probably because the Linux scheduler is nicer towards processes that manually yield, but this advantage might fade in larger programs.
 
 This experiment shows that it can be worth it to use a custom mutex implementation as the code using atomics is both relatively short and fast at execution time. This code can be quickly adapted to other schedulers (such as green thread libraries) by merely replacing the call to `yield()` with the equivalent in the custom scheduler, or a busy wait.
+
+Similar tests were done in Rust where the standard library code for `std::sync::Mutex` was copied and adapted the same way, and no difference was found. It seems the Rust compiler does not use the actual `pthread` implementation of mutexes.
