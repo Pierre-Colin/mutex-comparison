@@ -71,11 +71,11 @@ class peterson_mutex : public mutex {
 	void lock(const size_t i) noexcept {
 		flag.at(i).store(true);
 		turn = 1 - i;
-		while (flag[1 - i].load(std::memory_order_relaxed) && turn != i);
+		while (flag[1 - i].load(std::memory_order_acquire) && turn != i);
 	}
 
 	void unlock(const size_t i) noexcept {
-		flag[i].store(false, std::memory_order_relaxed);
+		flag[i].store(false, std::memory_order_release);
 	}
 };
 
@@ -106,13 +106,13 @@ class feather_mutex : public mutex {
 	
 	void lock(const size_t i) noexcept {
 		(void) i;
-		while(m.test_and_set(std::memory_order_relaxed))
+		while(m.test_and_set(std::memory_order_acq_rel))
 			std::this_thread::yield();
 	}
 
 	void unlock(const size_t i) noexcept {
 		(void) i;
-		m.clear(std::memory_order_relaxed);
+		m.clear(std::memory_order_release);
 	}
 };
 
